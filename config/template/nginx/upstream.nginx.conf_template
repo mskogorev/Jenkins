@@ -1,0 +1,16 @@
+upstream apache {
+    server apache:8080;
+}
+
+upstream balance {
+	server apache:8080;
+}
+
+upstream balance_api_${ID} {
+    server apache:300${ID};
+}
+
+upstream bendcs5 {
+    server 127.0.0.1:81;
+    server 127.0.0.1:82 down;
+}

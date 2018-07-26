@@ -1,0 +1,14 @@
+server {
+        listen 298${ID};
+        server_name ${BRANCH}${ID}.livemaster;
+
+	error_log /var/log/nginx/${BRANCH}${ID}_error.log;
+	access_log /var/log/nginx/${BRANCH}${ID}_access.log lm;
+
+        location / {
+                proxy_pass http://balance_api_${ID};
+                proxy_redirect default;
+                include /etc/nginx/lm/proxy_params_lm;
+        }
+
+}

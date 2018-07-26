@@ -1,0 +1,36 @@
+server {
+        listen 80;
+	listen 443 ssl;
+	include /etc/nginx/lm/ssl_params_livemaster;
+     
+        server_name cs10.${BRANCH}${ID}.livemaster;
+	access_log /var/log/nginx/cs10_${BRANCH}${ID}_access.log lm;
+	error_log /var/log/nginx/cs10_${BRANCH}${ID}_access.log;
+
+        rewrite ^(/storage/[/a-zA-Z0-9]+)-[-a-zA-Z0-9]+(\.[a-zA-Z]+)$ $1$2 last;
+
+	add_header Content-Disposition 'attachment';
+	location = / {
+	return 503;
+	}
+
+
+########################################################################################
+#################################### Новая ФС ##########################################
+
+                location ^~ /storage/ {
+                        root /cs10/;
+                        try_files $uri @store;
+                }
+
+                location @store {
+                        resolver 8.8.8.8; # Поднять вопрос о другом ресолвере
+                        root /cs10/;
+                        proxy_store on;
+                        proxy_store_access user:rw group:rw all:rw;
+                        proxy_temp_path /cs10/tmp;
+                        proxy_pass https://cs10.livemaster.ru;
+                }
+
+                
+}

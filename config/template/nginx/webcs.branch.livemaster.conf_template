@@ -1,0 +1,413 @@
+limit_req_zone $binary_remote_addr zone=webcs${BRANCH}${ID}:32m rate=3r/s;
+
+server {
+        listen 80;
+        listen 443 ssl;
+	include /etc/nginx/lm/ssl_params_livemaster;
+        
+        server_name webcs1.${BRANCH}${ID}.livemaster;
+        error_log /var/log/nginx/webcs1.${BRANCH}${ID}_error.log;
+        access_log /var/log/nginx/webcs1.${BRANCH}${ID}_access.log;
+        gzip off;
+        expires 30d;
+        client_max_body_size 12m;
+
+        location = / {
+                rewrite ^(.*) http://${BRANCH}${ID}.livemaster/ permanent;
+        }
+
+	location = /origin.php {
+		proxy_pass http://apache;
+		proxy_redirect http://apache/ /;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+	}
+
+
+        location ^~ /files/upload/ {
+
+               if ($request_method = 'OPTIONS') {
+                       rewrite (.*) /origin.php;
+               }
+
+                proxy_pass http://apache;
+
+		proxy_redirect http://apache/ /;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+
+        }
+
+        location ^~ /files/ {
+                        
+                        limit_req zone=webcs${BRANCH}${ID} burst=30;
+                        proxy_pass http://apache;
+                        proxy_redirect default;
+                        proxy_set_header Host $host;
+                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                        proxy_set_header X-Real-IP $remote_addr;
+                        
+
+        }
+
+        location / {
+                return 503;
+        }
+
+}
+
+server {
+        listen 80;
+        listen 443 ssl;
+	include /etc/nginx/lm/ssl_params_livemaster;
+        
+        server_name webcs2.${BRANCH}${ID}.livemaster;
+        error_log /var/log/nginx/webcs2.${BRANCH}${ID}_error.log;
+        access_log /var/log/nginx/webcs2.${BRANCH}${ID}_access.log;
+        gzip off;
+        expires 30d;
+        client_max_body_size 12m;
+
+
+        location = / {
+                rewrite ^(.*) http://${BRANCH}${ID}.livemaster/ permanent;
+        }
+
+	location = /origin.php {
+		proxy_pass http://apache;
+		proxy_redirect http://apache/ /;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+	}
+
+
+        location ^~ /files/upload/ {
+
+               if ($request_method = 'OPTIONS') {
+                       rewrite (.*) /origin.php;
+               }
+
+                proxy_pass http://apache;
+
+		proxy_redirect http://apache/ /;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+
+        }
+
+        location ^~ /files/ {
+                        
+                        limit_req zone=webcs${BRANCH}${ID} burst=30;
+                        proxy_pass http://apache;
+                        proxy_redirect default;
+                        proxy_set_header Host $host;
+                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                        proxy_set_header X-Real-IP $remote_addr;
+                        
+
+        }
+
+        location / {
+                return 503;
+        }
+
+}
+
+server {
+        listen 80;
+        listen 443 ssl;
+	include /etc/nginx/lm/ssl_params_livemaster;
+        
+        server_name webcs5.${BRANCH}${ID}.livemaster;
+        error_log /var/log/nginx/webcs5.${BRANCH}${ID}_error.log;
+        access_log /var/log/nginx/webcs5.${BRANCH}${ID}_access.log;
+        gzip off;
+        expires 30d;
+        client_max_body_size 12m;
+
+
+        location = / {
+                rewrite ^(.*) http://${BRANCH}${ID}.livemaster/ permanent;
+        }
+
+	location = /origin.php {
+		proxy_pass http://apache;
+		proxy_redirect http://apache/ /;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+	}
+
+
+        location ^~ /files/upload/ {
+
+               if ($request_method = 'OPTIONS') {
+                       rewrite (.*) /origin.php;
+               }
+
+                proxy_pass http://apache;
+
+		proxy_redirect http://apache/ /;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+
+        }
+
+        location ^~ /files/ {
+                        
+                        limit_req zone=webcs${BRANCH}${ID} burst=30;
+                        proxy_pass http://apache;
+                        proxy_redirect default;
+                        proxy_set_header Host $host;
+                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                        proxy_set_header X-Real-IP $remote_addr;
+                        
+
+        }
+
+        location / {
+                return 503;
+        }
+
+}
+
+server {
+        listen 80;
+        listen 443 ssl;
+	include /etc/nginx/lm/ssl_params_livemaster;
+        
+        server_name webcs6.${BRANCH}${ID}.livemaster;
+        error_log /var/log/nginx/webcs6.${BRANCH}${ID}_error.log;
+        access_log /var/log/nginx/webcs6.${BRANCH}${ID}_access.log;
+        gzip off;
+        expires 30d;
+        client_max_body_size 12m;
+
+
+        location = / {
+                rewrite ^(.*) http://${BRANCH}${ID}.livemaster/ permanent;
+        }
+
+	location = /origin.php {
+		proxy_pass http://apache;
+		proxy_redirect http://apache/ /;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+	}
+
+
+        location ^~ /files/upload/ {
+
+               if ($request_method = 'OPTIONS') {
+                       rewrite (.*) /origin.php;
+               }
+
+                proxy_pass http://apache;
+
+		proxy_redirect http://apache/ /;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+
+        }
+
+        location ^~ /files/ {
+                        
+                        limit_req zone=webcs${BRANCH}${ID} burst=30;
+                        proxy_pass http://apache;
+                        proxy_redirect default;
+                        proxy_set_header Host $host;
+                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                        proxy_set_header X-Real-IP $remote_addr;
+                        
+
+        }
+
+        location / {
+                return 503;
+        }
+
+}
+
+server {
+        listen 80;
+        listen 443 ssl;
+	include /etc/nginx/lm/ssl_params_livemaster;
+        
+        server_name webcs7.${BRANCH}${ID}.livemaster;
+        error_log /var/log/nginx/webcs7.${BRANCH}${ID}_error.log;
+        access_log /var/log/nginx/webcs7.${BRANCH}${ID}_access.log;
+        gzip off;
+        expires 30d;
+        client_max_body_size 12m;
+
+
+        location = / {
+                rewrite ^(.*) http://${BRANCH}${ID}.livemaster/ permanent;
+        }
+
+	location = /origin.php {
+		proxy_pass http://apache;
+		proxy_redirect http://apache/ /;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+	}
+
+
+        location ^~ /files/upload/ {
+
+               if ($request_method = 'OPTIONS') {
+                       rewrite (.*) /origin.php;
+               }
+
+                proxy_pass http://apache;
+
+		proxy_redirect http://apache/ /;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+
+        }
+
+        location ^~ /files/ {
+                        
+                        limit_req zone=webcs${BRANCH}${ID} burst=30;
+                        proxy_pass http://apache;
+                        proxy_redirect default;
+                        proxy_set_header Host $host;
+                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                        proxy_set_header X-Real-IP $remote_addr;
+                        
+
+        }
+
+        location / {
+                return 503;
+        }
+
+}
+
+server {
+        listen 80;
+        listen 443 ssl;
+	include /etc/nginx/lm/ssl_params_livemaster;
+        
+        server_name webcs8.${BRANCH}${ID}.livemaster;
+        error_log /var/log/nginx/webcs8.${BRANCH}${ID}_error.log;
+        access_log /var/log/nginx/webcs8.${BRANCH}${ID}_access.log;
+        gzip off;
+        expires 30d;
+        client_max_body_size 12m;
+
+
+        location = / {
+                rewrite ^(.*) http://${BRANCH}${ID}.livemaster/ permanent;
+        }
+
+	location = /origin.php {
+		proxy_pass http://apache;
+		proxy_redirect http://apache/ /;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+	}
+
+
+        location ^~ /files/upload/ {
+
+               if ($request_method = 'OPTIONS') {
+                       rewrite (.*) /origin.php;
+               }
+
+                proxy_pass http://apache;
+
+		proxy_redirect http://apache/ /;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+
+        }
+
+        location ^~ /files/ {
+                        
+                        limit_req zone=webcs${BRANCH}${ID} burst=30;
+                        proxy_pass http://apache;
+                        proxy_redirect default;
+                        proxy_set_header Host $host;
+                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                        proxy_set_header X-Real-IP $remote_addr;
+                        
+
+        }
+
+        location / {
+                return 503;
+        }
+
+}
+
+server {
+        listen 80;
+        listen 443 ssl;
+	include /etc/nginx/lm/ssl_params_livemaster;
+        
+        server_name webcs9.${BRANCH}${ID}.livemaster;
+        error_log /var/log/nginx/webcs9.${BRANCH}${ID}_error.log;
+        access_log /var/log/nginx/webcs9.${BRANCH}${ID}_access.log;
+        gzip off;
+        expires 30d;
+        client_max_body_size 12m;
+
+
+        location = / {
+                rewrite ^(.*) http://${BRANCH}${ID}.livemaster/ permanent;
+        }
+
+	location = /origin.php {
+		proxy_pass http://apache;
+		proxy_redirect http://apache/ /;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+	}
+
+
+        location ^~ /files/upload/ {
+
+               if ($request_method = 'OPTIONS') {
+                       rewrite (.*) /origin.php;
+               }
+
+                proxy_pass http://apache;
+
+		proxy_redirect http://apache/ /;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+
+        }
+
+        location ^~ /files/ {
+                        
+                        limit_req zone=webcs${BRANCH}${ID} burst=30;
+                        proxy_pass http://apache;
+                        proxy_redirect default;
+                        proxy_set_header Host $host;
+                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                        proxy_set_header X-Real-IP $remote_addr;
+                        
+
+        }
+
+        location / {
+                return 503;
+        }
+
+}

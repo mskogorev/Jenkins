@@ -1,0 +1,204 @@
+server {
+        listen 80;
+	listen 443 ssl;
+	include /etc/nginx/lm/ssl_params_livemaster;
+
+        server_name cs3.${BRANCH}${ID}.livemaster;
+	access_log /var/log/nginx/cs_${BRANCH}${ID}_access.log lm;
+	error_log /var/log/nginx/cs_${BRANCH}${ID}_access.log;
+
+	rewrite ^(/storage/[/a-zA-Z0-9]+)-[-a-zA-Z0-9]+(\.[a-zA-Z]+)$ $1$2 last;
+
+	rewrite ^/foto/large/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([0-9]+)-([-a-zA-Z0-9]+).([a-zA-Z0-9]+)$ /foto/large/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/large/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([0-9]+)n([0-9]+).([a-zA-Z0-9]+)$ /foto/large/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/large/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])(.+)$ /foto/large/$1/$2/$3/$4 last;
+
+        rewrite ^/foto/175x175/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([0-9]+)-([-a-zA-Z0-9]+).([a-zA-Z0-9]+)$ /foto/175x175/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/175x175/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([0-9]+)n([0-9]+).([a-zA-Z0-9]+)$ /foto/175x175/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/175x175/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])(.+)$ /foto/175x175/$1/$2/$3/$4 last;
+
+        rewrite ^/foto/300/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([0-9]+)-([-a-zA-Z0-9]+).([a-zA-Z0-9]+)$ /foto/300/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/300/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([0-9]+)n([0-9]+).([a-zA-Z0-9]+)$ /foto/300/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/300/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])(.+)$ /foto/300/$1/$2/$3/$4;
+
+        rewrite ^/foto/pic/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([0-9]+)-([-a-zA-Z0-9]+).([a-zA-Z0-9]+)$ /foto/pic/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/pic/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([0-9]+)n([0-9]+).([a-zA-Z0-9]+)$ /foto/pic/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/pic/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])(.+)$ /foto/pic/$1/$2/$3/$4;
+
+        rewrite ^/foto/400/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([0-9]+)-([-a-zA-Z0-9]+).([a-zA-Z0-9]+)$ /foto/400/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/400/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([0-9]+)n([0-9]+).([a-zA-Z0-9]+)$ /foto/400/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/400/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])(.+)$ /foto/400/$1/$2/$3/$4;
+
+        rewrite ^/foto/item/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([0-9]+)-([-a-zA-Z0-9]+).([a-zA-Z0-9]+)$ /foto/400/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/item/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([0-9]+)n([0-9]+).([a-zA-Z0-9]+)$ /foto/400/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/item/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])(.+)$ /foto/400/$1/$2/$3/$4;
+
+        rewrite ^/foto/preview/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([0-9]+)-([-a-zA-Z0-9]+).([a-zA-Z0-9]+)$ /foto/400/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/preview/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([0-9]+)n([0-9]+).([a-zA-Z0-9]+)$ /foto/400/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/preview/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])(.+)$ /foto/400/$1/$2/$3/$4;
+
+        rewrite ^/drafts/small/s([0-9])([0-9])([i0-9])([a-zA-Z0-9.]+)$ /drafts/small/s/$1/$2/$3/$4 last;
+        rewrite ^/drafts/([0-9])([0-9])([i0-9])([a-zA-Z0-9.]+)$ /drafts/$1/$2/$3/$4 last;
+
+	rewrite ^/foto/workofday/175x175/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9]+)-([-a-zA-Z0-9]+).([a-zA-Z0-9]+)$ /foto/workofday/175x175/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/workofday/175x175/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9]+)n([0-9]+).([a-zA-Z0-9]+)$ /foto/workofday/175x175/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/workofday/175x175/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])(.+)$ /foto/workofday/175x175/$1/$2/$3/$4 last;
+
+        rewrite ^/foto/workofday/400/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9]+)-([-a-zA-Z0-9]+).([a-zA-Z0-9]+)$ /foto/workofday/400/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/workofday/400/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9]+)n([0-9]+).([a-zA-Z0-9]+)$ /foto/workofday/400/$1/$2/$3/$4.$6 last;
+        rewrite ^/foto/workofday/400/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])(.+)$ /foto/workofday/400/$1/$2/$3/$4 last;
+	
+	rewrite ^/zhurnalfoto/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9]+).([a-zA-Z0-9]+)$ /zhurnalfoto/$1/$2/$3/$4.$5 last;
+
+	rewrite ^/pfoto/large/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])(.+)$ /pfoto/large/$1/$2/$3/$4 last;
+        rewrite ^/pfoto/item/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])(.+)$ /pfoto/item/$1/$2/$3/$4 last;
+        rewrite ^/pfoto/preview/([a-zA-Z0-9])([a-zA-Z0-9])([a-zA-Z0-9])(.+)$ /pfoto/preview/$1/$2/$3/$4 last;
+
+                location = / {
+                        return 503;
+                }
+
+########################################################################################
+#################################### Старая ФС ##########################################
+
+		location ^~ /1/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /adv/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /articlefoto/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /avatar/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /blog/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /button/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /cgi-bin/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /contestfoto/ {
+                        root /home/blivemaster/data/${BRANCH}${ID}/;
+			try_files $uri @store;
+                }
+
+
+                location ^~ /drafts/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+		}
+	
+                location ^~ /files/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /foto/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /images/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /interviewfoto/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /itemsets/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+		location ^~ /masterbanner/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /masterfoto/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /openx/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /orderfoto/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /pfoto/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+		
+		location ^~ /sitemaps/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /test/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /webstat/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /yainvoicing/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+                location ^~ /zhurnalfoto/ {
+                        root /home/blivemaster/data/${BRANCH}${ID};
+                        try_files $uri @store;
+                }
+
+
+########################################################################################
+#################################### Новая ФС ##########################################
+
+                location ^~ /storage/ {
+                        root /cs3/;
+                        try_files $uri @store;
+                }
+
+                location @store {
+                        resolver 8.8.8.8; # Поднять вопрос о другом ресолвере
+                        root /data/;
+                        proxy_store on;
+                        proxy_store_access user:rw group:rw all:rw;
+                        proxy_temp_path /data/tmp;
+                        proxy_pass http://cs3.livemaster.ru;
+                }
+
+		
+}

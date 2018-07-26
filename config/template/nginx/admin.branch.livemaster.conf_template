@@ -1,0 +1,85 @@
+server {
+	listen 1812;
+	server_name ${BRANCH}${ID}.livemaster;	
+	rewrite ^.*$ http://${BRANCH}${ID}.livemaster/$request_uri permanent;
+}
+
+server {
+        
+        listen 1862 ssl;
+        include /etc/nginx/lm/ssl_params_livemaster;
+
+	server_name ${BRANCH}${ID}.livemaster;
+	access_log /var/log/nginx/admin_${BRANCH}${ID}.livemaster_access.log;
+
+	location /lib/ {
+		root /home/blivemaster/data/${BRANCH}${ID};
+
+		location ~* ^.+\.php$ {
+			proxy_pass http://apache;
+			proxy_redirect default;
+			proxy_set_header Host $host;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_next_upstream error timeout invalid_header http_502 http_504;
+			proxy_buffers 16 32k;
+			proxy_buffer_size 32k;
+			proxy_busy_buffers_size 64k;
+			proxy_temp_file_write_size 64k;
+			proxy_connect_timeout 30s;
+			client_body_buffer_size 128k;
+		}
+	}
+	
+	location /sublevel/ {
+                proxy_pass http://apache;
+                proxy_redirect default;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_next_upstream error timeout invalid_header http_502 http_504;
+                proxy_buffers 16 32k;
+                proxy_buffer_size 32k;
+                proxy_busy_buffers_size 64k;
+                proxy_temp_file_write_size 64k;
+                proxy_connect_timeout 30s;
+                client_body_buffer_size 128k;
+        }
+
+                location = /sublevel/crmfilemanager/uploadfile {
+                        client_max_body_size 50m;
+                        proxy_pass http://apache;
+                        proxy_redirect default;
+                        proxy_set_header Host $host;
+                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                        proxy_set_header X-Real-IP $remote_addr;
+                        proxy_next_upstream error timeout invalid_header http_502 http_504;
+                        proxy_buffers 16 32k;
+                        proxy_buffer_size 32k;
+                        proxy_busy_buffers_size 64k;
+                        proxy_temp_file_write_size 64k;
+                        proxy_connect_timeout 30s;
+                        client_body_buffer_size 128k;
+                }
+
+
+	location ~* ^.*image.php$ {
+                proxy_pass http://apache;
+                proxy_redirect default;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_next_upstream error timeout invalid_header http_502 http_504;
+                proxy_buffers 16 32k;
+                proxy_buffer_size 32k;
+                proxy_busy_buffers_size 64k;
+                proxy_temp_file_write_size 64k;
+                proxy_connect_timeout 30s;
+                client_body_buffer_size 128k;
+	}
+	
+	location / {
+		rewrite ^(.*)$ https://${BRANCH}${ID}.livemaster$1 last;
+	}
+
+}

@@ -1,0 +1,35 @@
+server {
+        listen 80;
+	listen 443 ssl;
+	include /etc/nginx/lm/ssl_params_livemaster;
+
+        server_name cs6.${BRANCH}${ID}.livemaster;
+	access_log /var/log/nginx/cs_${BRANCH}${ID}_access.log lm;
+	error_log /var/log/nginx/cs_${BRANCH}${ID}_access.log;
+
+        rewrite ^(/storage/[/a-zA-Z0-9]+)-[-a-zA-Z0-9]+(\.[a-zA-Z]+)$ $1$2 last;
+
+	location = / {
+		return 503;
+	}
+
+
+########################################################################################
+#################################### Новая ФС ##########################################
+
+                location ^~ /storage/ {
+                        root /cs6/;
+                        try_files $uri @store;
+                }
+
+                location @store {
+                        resolver 8.8.8.8; # Поднять вопрос о другом ресолвере
+                        root /cs6/;
+                        proxy_store on;
+                        proxy_store_access user:rw group:rw all:rw;
+                        proxy_temp_path /cs6/tmp;
+                        proxy_pass https://cs6.livemaster.ru;
+                }
+
+                
+}

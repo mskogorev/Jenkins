@@ -1,0 +1,121 @@
+server {
+        listen 80;
+	listen 443 ssl;
+	include /etc/nginx/lm/ssl_params_livemaster;
+
+        server_name cs5.${BRANCH}${ID}.livemaster;
+	access_log /var/log/nginx/cs_${BRANCH}${ID}_access.log lm;
+	error_log /var/log/nginx/cs_${BRANCH}${ID}_access.log;
+        gzip off;
+
+        rewrite ^(/storage/[/a-zA-Z0-9]+)-[-a-zA-Z0-9]+(\.[a-zA-Z]+)$ $1$2 last;
+
+        location = / {
+                return 503;
+        }
+
+        location / {
+                root /cs5/;
+                try_files $uri @cs5store;
+        }
+
+	location @cs5store {
+			resolver 8.8.8.8; # Поднять вопрос о другом ресолвере
+                        root /cs5/;
+                        proxy_store on;
+                        proxy_store_access user:rw group:rw all:rw;
+                        proxy_temp_path /cs5/tmp;
+                        proxy_pass http://cs5.livemaster.ru;
+                }
+
+        location @fallback {
+                proxy_pass http://bendcs5;
+                proxy_redirect default;
+        }
+}
+
+server {
+        listen 81;
+        server_name cs5.${BRANCH}${ID}.livemaster;
+	access_log /var/log/nginx/cs_${BRANCH}${ID}_access.log lm;
+	error_log /var/log/nginx/cs_${BRANCH}${ID}_access.log;
+        gzip off;
+
+
+        location = / {
+                rewrite ^(.*) http://${BRANCH}${ID}.livemaster/ permanent;
+        }
+
+        location / {
+                set $nop "";
+                proxy_http_version              1.1;
+                proxy_set_header                Host 'betalmcs5.s3.eu-central-1.amazonaws.com';
+                proxy_set_header                Authorization '';
+                proxy_set_header                X-Forwarded-For '';
+                proxy_set_header                X-Real-IP '';
+                proxy_hide_header               x-amz-id-2;
+                proxy_hide_header               x-amz-request-id;
+                proxy_hide_header               Set-Cookie;
+                proxy_ignore_headers            "Cache-Control" "Expires" "Set-Cookie";
+
+                proxy_pass                      https://betalmcs5.s3.eu-central-1.amazonaws.com$nop;
+                proxy_redirect                  https://betalmcs5.s3.eu-central-1.amazonaws.com$nop /;
+                resolver                        8.8.8.8 8.8.4.4 valid=300s;
+                resolver_timeout                10s;
+
+                proxy_intercept_errors on;
+                error_page 400 403 404 405 409 411 416 501 503 = @fallback;
+
+        }
+
+        location @fallback {
+                access_log /var/log/nginx/cs5.${BRANCH}${ID}.livemaster.local.access.log;
+                root /cs5;
+                try_files $uri =404;
+        }
+}
+
+server {
+        listen 82;
+        server_name cs5.${BRANCH}${ID}.livemaster;
+	access_log /var/log/nginx/cs_${BRANCH}${ID}_access.log lm;
+	error_log /var/log/nginx/cs_${BRANCH}${ID}_access.log;
+        gzip off;
+
+
+        location = / {
+                return 503;
+        }
+
+        location / {
+                set $selectel_url               https://147903.selcdn.ru/Test;
+                proxy_http_version              1.1;
+                proxy_set_header                Host '147903.selcdn.ru';
+                proxy_set_header                Authorization '';
+                proxy_set_header                X-Forwarded-For '';
+                proxy_set_header                X-Real-IP '';
+                proxy_hide_header               Access-Control-Allow-Origin;
+                proxy_hide_header               Access-Control-Expose-Headers;
+                proxy_hide_header               X-Timestamp;
+                proxy_hide_header               X-Object-Downloads;
+                proxy_hide_header               Set-Cookie;
+                proxy_ignore_headers            "Cache-Control" "Expires" "Set-Cookie";
+
+                proxy_pass                      $selectel_url$request_uri;
+                proxy_redirect                  $selectel_url$request_uri /;
+                resolver                        8.8.8.8 8.8.4.4 valid=300s;
+                resolver_timeout                10s;
+
+                proxy_intercept_errors on;
+                error_page 400 403 404 405 409 411 416 501 503 = @fallback;
+
+        }
+
+        location @fallback {
+	access_log /var/log/nginx/cs_${BRANCH}${ID}_local_access.log lm;
+                root /cs5;
+                try_files $uri =404;
+        }
+
+
+}

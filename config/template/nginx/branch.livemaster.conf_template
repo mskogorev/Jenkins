@@ -1,0 +1,324 @@
+#client_max_body_size 12m;
+limit_req_zone $binary_remote_addr zone=${BRANCH}${ID}:32m rate=10r/s;
+
+server {
+	listen 80;
+	listen 443 ssl http2;
+	include /etc/nginx/lm/ssl_params_livemaster;
+
+	#WARNING! TinyMCE work on iframe
+	#add_header	X-Frame-Options DENY;
+	add_header	X-Content-Type-Options nosniff;
+	add_header	X-XSS-Protection "1; mode=block;";
+
+	server_name ${BRANCH}${ID}.livemaster ${BRANCH}${ID}.livemastercom;
+	error_log /var/log/nginx/${BRANCH}${ID}_error.log;
+	access_log /var/log/nginx/${BRANCH}${ID}_access.log lm;
+
+	set_real_ip_from 89.108.73.220;        
+        deny 66.211.170.66;
+        deny 173.0.81.1;
+        deny 173.0.81.33;
+        deny 173.0.82.126;
+        deny 173.0.82.66;
+
+	root /home/blivemaster/data/${BRANCH}${ID};
+
+	error_page 400 /offline.html;
+	error_page 403 404 =404 /404.html;
+	error_page 500 501 502 503 504 =503 @offline50x;
+
+	##автоверсионирование файлов статики
+	rewrite ^(/css/[-\._0-9a-zA-Z]+)\.[0-9]+(\.css)$ $1$2 last;
+	rewrite ^(/js/[-\._0-9a-zA-Z]+)\.[0-9]+(\.js)$ $1$2 last;
+	rewrite ^(/image/[-\./_0-9a-zA-Z]+)\.[0-9]+(\.png|\.jpg|\.jpeg|\.gif|\.css|\.js|\.cur|\.swf)$ $1$2 last;
+	rewrite ^(/lib/)(auploader|carousel_new|cfotoupload|livemasterjs|lm\.ui\.uploader|multiselect|xfotoupload)\.[0-9]+(\.js)$ $1$2$3 last;
+	rewrite ^(/lib/jquery/social-likes/social-likes\.min)\.[0-9]+(\.js)$ $1$2 last;
+	rewrite ^(/lib/jquery/upload/js/)(inter|uploaderObject)\.[0-9]+(\.js)$ $1$2$3 last;
+	rewrite ^(/sublevel/css/[-\._0-9a-zA-Z]+)\.[0-9]+(\.css)$ $1$2 last;
+	rewrite ^(/sublevel/js/[-\./_0-9a-zA-Z]+)\.[0-9]+(\.png|\.gif|\.css|\.js)$ $1$2 last;
+	rewrite ^(/sublevel/)(style|stylesheet)\.[0-9]+(\.css)$ $1$2$3 last;
+	###
+
+
+	rewrite ^/image/t/(.*) /image/t/img.php?r=/image/t/$1;
+
+	rewrite ^/adv/(.*) http://cs1.${BRANCH}${ID}.livemaster/adv/$1 permanent;		
+	rewrite ^/articlefoto/(.*) http://cs1.${BRANCH}${ID}.livemaster/articlefoto/$1 permanent;
+	rewrite ^/button/(.*) http://cs1.${BRANCH}${ID}.livemaster/button/$1 permanent;
+	rewrite ^/drafts/(.*) http://cs1.${BRANCH}${ID}.livemaster/drafts/$1 permanent;
+	#
+	rewrite ^/foto/icon/(.*) http://cs1.${BRANCH}${ID}.livemaster/foto/icon/$1 permanent;
+	rewrite ^/foto/uploadtmp/(.*) http://cs1.${BRANCH}${ID}.livemaster/foto/uploadtmp/$1 permanent;
+	rewrite ^/foto/workofday/(.*) http://cs2.${BRANCH}${ID}.livemaster/foto/workofday/$1 permanent;
+	#
+	
+	###For static content in /files
+	location ^~ /files/ {
+		location ~* ^/files/[\./_a-zA-Z0-9-]+(\.jpg|\.png|\.jpeg|\.pdf)$ {
+			proxy_pass http://127.0.0.1:80;
+			proxy_redirect default;
+			proxy_set_header Host cs1.$host;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_set_header X-Real-IP $remote_addr;
+		}
+
+		location /files/ {
+			return 404;   ### php-scripts in files location only on webcs
+		}
+        }
+
+        location /es/ {
+		location /es/featured/ {
+                        rewrite /es/featured/([0-9]+)-[a-zA-Z0-9-]+$ /search.php?action=paging&searchtype=1&sort=votes&sr=$1 last;
+                        rewrite /es/featured/([0-9]+)-[a-zA-Z0-9-]+/(.*) /search.php?action=paging&searchtype=1&sort=votes&sr=$1&sr_rubrics=$2 last;
+                }
+                proxy_set_header LANGUAGE_ZONE es;
+                proxy_set_header REQUEST_URI /;
+                set  $referer  $http_referer;
+                        if ($http_referer ~ '^(.*)/es(.*)$') {
+                        set  $referer $1/$2;
+                        }
+                proxy_set_header referer $referer;
+                proxy_pass http://balance/;
+                proxy_redirect default;
+                include /etc/nginx/lm/proxy_params_lm;
+        }
+
+        location /ua/ {
+		location /ua/featured/ {
+                        rewrite /ua/featured/([0-9]+)-[a-zA-Z0-9-]+$ /search.php?action=paging&searchtype=1&sort=votes&sr=$1 last;
+                        rewrite /ua/featured/([0-9]+)-[a-zA-Z0-9-]+/(.*) /search.php?action=paging&searchtype=1&sort=votes&sr=$1&sr_rubrics=$2 last;
+                }
+                proxy_set_header LANGUAGE_ZONE ua;
+                proxy_set_header REQUEST_URI /;
+                set  $referer  $http_referer;
+                        if ($http_referer ~ '^(.*)/ua(.*)$') {
+                        set  $referer $1/$2;
+                        }
+                proxy_set_header referer $referer;
+                proxy_pass http://balance/;
+                proxy_redirect default;
+                include /etc/nginx/lm/proxy_params_lm;
+        }
+
+        location /en {
+                rewrite ^/en(.*) https://${BRANCH}${ID}.livemastercom$1 last;
+        }
+
+        location /ru {
+                rewrite ^/ru(.*) https://${BRANCH}${ID}.livemaster$1 last;
+        }
+
+	location ^~ /sitemaps/ {
+		proxy_pass http://127.0.0.1:80;
+		proxy_redirect default;
+		proxy_set_header Host cs1.$host;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Real-IP $remote_addr;
+	}
+
+	location ^~ /api/ {
+		# Времено отключено из-за проблем с HTTPS в iOS приложениях
+		#if ($https != on) { 
+		#	return 500;
+		#}
+
+                proxy_pass http://apache;
+                proxy_redirect default;
+                proxy_read_timeout 15s;
+                limit_req zone=${BRANCH}${ID} burst=10;
+                include /etc/nginx/lm/proxy_params_lm;
+
+	}
+
+	location =/edititemfoto.php {
+                gzip off;
+                proxy_pass http://balance;
+                proxy_redirect default;
+                limit_req zone=${BRANCH}${ID} burst=50;
+		include /etc/nginx/lm/proxy_params_lm;
+	}
+	
+	location = /_.gif {
+		empty_gif;
+		gzip off;
+	}
+
+	location /ajax/ {
+		proxy_pass http://balance;
+		proxy_redirect default;
+                limit_req zone=${BRANCH}${ID} burst=10;
+		include /etc/nginx/lm/proxy_params_lm;
+	}
+
+	location /404.php {
+		proxy_pass http://balance;
+		proxy_redirect default;
+		include /etc/nginx/lm/proxy_params_lm;
+	}
+
+	location = /offline.html {
+		root /home/blivemaster/data/${BRANCH}${ID};
+		add_header Cache-Control no-cache;
+		add_header Retry-After 3600;
+		#return 503;
+	}
+
+	location / {
+		if ($https != on) {
+			rewrite (.*) https://$host$request_uri permanent;
+		}
+		#return 503;
+		proxy_pass http://balance;
+		proxy_redirect default;
+		proxy_read_timeout 120s;
+		limit_req zone=${BRANCH}${ID} burst=10;		
+		include /etc/nginx/lm/proxy_params_lm;		
+	}
+
+        location /dev/ {
+                return 404;
+        }
+
+       location = /c2cpayments/paypalipn {
+                
+                set_real_ip_from 89.108.73.220;
+
+                allow 127.0.0.1;
+                allow 91.203.179.9;
+                allow 213.137.248.11;
+                allow 31.132.155.141;
+                allow 89.108.73.220;
+                allow 66.211.170.66;
+                allow 173.0.81.1;
+                allow 173.0.81.33;
+                allow 173.0.82.126;
+                allow 173.0.82.66;
+                deny all;
+
+                #include /etc/nginx/naxsi.rules
+                #return 503;
+                proxy_pass http://apache;
+                proxy_redirect default;
+                proxy_read_timeout 120s;
+
+                limit_req zone=${BRANCH}${ID} burst=10;
+
+                include /etc/nginx/proxy_params_lm;
+
+                limit_except POST {
+                        allow 127.0.0.1;
+                        allow 91.203.179.9;
+                        allow 213.137.248.11;
+                        allow 31.132.155.141;
+                        allow 89.108.73.220;
+                        allow 66.211.170.66;
+                        allow 173.0.81.1;
+                        allow 173.0.81.33;
+                        allow 173.0.82.126;
+                        allow 173.0.82.66;
+                        deny all;
+                }
+        }
+
+
+        location ^~ /foto/300/ { return 404;}
+        location ^~ /foto/400/ { return 404;}
+        location ^~ /foto/pic/ { return 404;}
+        location ^~ /foto/large/ { return 404;}
+        location ^~ /foto/item/ {return 404;}
+        location ^~ /foto/175x175/ { return 404;}
+        location ^~ /avatar/ { return 404;}
+        location ^~ /foto/ { return 404;}
+
+	location = /test/ { return 404; }
+        location = /lib/tinymce358/ { return 404; }
+        location = /lib/tinymce358/plugins/ { return 404; }
+        location = /contest/ { return 404; }
+	location = /ajax/ { return 404; }
+        location = /css/ { return 404; }
+        location = /image/ { return 404; }
+        location = /lib/ { return 404; }
+	location = /cron { return 404; }
+	location /cron/ { return 404; }
+	location = /inc { return 404; }
+	location /inc/ { return 404; }
+	location = /sphinx { return 404; }
+	location /sphinx/ { return 404; }
+	location = /tpl { return 404; }
+	location /tpl/ { return 404; }
+	location = /livemaster { return 404; }
+	location /livemaster/ { return 404; }
+	location = /sublevel { return 404; }
+	location /sublevel/ { return 404; }
+	location =/subsection { return 404; }
+	location /subsection/ { return 404; }
+	location = /i18n { return 404; }
+        location /i18n/ { return 404; }	
+	location = /storage { return 404; }
+        location /storage/ { return 404; }
+	location = /openx { return 404; }
+        location /openx/ { return 404; }
+	location = /extensions { return 404; }
+        location /extensions/ { return 404; }
+	location = /lmapi { return 404; }
+        location /lmapi/ { return 404; }
+
+	location ~* ^.+\.(jpg|html|txt|jpeg|gif|png|svg|js|json|css|mp3|ogg|mpe?g|avi|zip|gz|bz2?|rar|sfw|ico)$ {
+		include /etc/nginx/lm/proxy_params_lm;
+		expires max;
+	}
+
+	location @offline50x {
+                try_files /offline.html =503;
+        }
+
+        location /pfs/download/ {
+                client_max_body_size 50m;
+                limit_req zone=${BRANCH}${ID} burst=10;
+                include /etc/nginx/lm/pfs_secret;
+                secure_link $arg_h,$arg_e;
+                secure_link_md5 "$secret_download$uri$secure_link_expires$remote_addr$http_user_agent";
+                if ($secure_link = "") {
+                        return 403;
+                }
+                if ($secure_link = "0") {
+                        return 410;
+                }
+
+                proxy_pass http://127.0.0.1:8585/v1/download/;
+                proxy_redirect default;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+
+        }
+
+        location /pfs/upload/ {
+                client_max_body_size 50m;
+                limit_req zone=${BRANCH}${ID} burst=10;
+                include /etc/nginx/lm/pfs_secret;
+                secure_link $arg_h,$arg_e;
+                secure_link_md5 "$secret_upload$uri$secure_link_expires$remote_addr$http_user_agent";
+                if ($secure_link = "") {
+                        return 403;
+                }
+
+                if ($secure_link = "0") {
+                        return 410;
+                }
+
+                proxy_pass http://127.0.0.1:8585/v1/upload/;
+                proxy_redirect default;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        location /featured/ {
+                rewrite ^/featured/([0-9]+)-[a-zA-Z0-9-]+$ /search.php?action=paging&searchtype=1&sort=votes&sr=$1 last;
+                rewrite ^/featured/([0-9]+)-[a-zA-Z0-9-]+/(.*) /search.php?action=paging&searchtype=1&sort=votes&sr=$1&sr_rubrics=$2 last;
+
+                return 404;
+        }
+
+}

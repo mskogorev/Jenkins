@@ -1,0 +1,187 @@
+<Directory />
+        Options None
+        AllowOverride None
+        
+        Require all denied
+</Directory>
+
+<Directory /home/blivemaster/data>
+        Options FollowSymLinks
+        AllowOverride All
+        
+        Require all granted
+</Directory>
+
+<VirtualHost *:8080>
+        ServerName ${BRANCH}${ID}.livemaster
+        ServerAlias ${BRANCH}${ID}.livemastercom
+	ServerAlias ${BRANCH}${ID}.com
+	ServerAlias m.${BRANCH}${ID}.livemaster
+        DocumentRoot /home/blivemaster/data/${BRANCH}${ID}
+        ServerAdmin support@livemaster.ru
+        SecRuleEngine Off
+        DirectoryIndex index.php
+        CustomLog /var/log/apache2/${BRANCH}${ID}.livemaster.access.log combined
+        ErrorLog /var/log/apache2/${BRANCH}${ID}.livemaster.error.log
+	php_admin_value open_basedir "/usr/share/php:/var/log/apache2:/var/xhprof:/home/blivemaster/data:/data:/etc/php5/include:/etc/php/7.0/include:/cs1:/cs2:/cs5:/cs6:/cs7:/cs8:/cs9:/cs10:/cs11:/storage:/pcs1:/pcs2:/pcs5"
+        php_admin_value error_log  /var/log/apache2/php_errors_${BRANCH}${ID}.log
+        php_admin_value upload_tmp_dir "/home/blivemaster/data/tmp"
+        php_admin_value sendmail_path "/bin/fake_sendmail -t -i -f noreply@livemaster.ru beta${ID}"
+	php_admin_value memory_limit 256M
+        php_admin_value session.save_handler memcached
+        php_admin_value session.save_path "192.168.255.242:112${ID},192.168.255.244:112${ID}"
+	php_admin_value xdebug.remote_port 90${ID}
+	AddType application/x-httpd-php .php .php3 .php4 .php5 .phtml .inc
+        AddType application/x-httpd-php-source .phps
+        ErrorDocument 404 http://${BRANCH}${ID}.livemaster/404.php
+        ErrorDocument 500 http://${BRANCH}${ID}.livemaster/500.php
+        <Directory /home/blivemaster/data/${BRANCH}${ID}/sublevel>
+                php_admin_value post_max_size 50M
+                php_admin_value upload_max_filesize 50M
+        </Directory>
+</VirtualHost>
+
+<VirtualHost *:8080>
+        ServerName  webcs1.${BRANCH}${ID}.livemaster
+	DocumentRoot /home/blivemaster/data/${BRANCH}${ID}
+        ServerAdmin support@livemaster.ru
+        SecRuleEngine Off
+        DirectoryIndex index.php
+        #CustomLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.access.log combined
+        ErrorLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.error.log
+	php_admin_value open_basedir "/usr/share/php:/var/log/apache2:/home/blivemaster/data:/data:/etc/php5/include:/etc/php/7.0/include:/cs1:/cs2:/cs5:/cs6:/cs7:/cs8:/cs9:/cs10:/storage:/pcs1:/pcs2:/pcs5"
+        php_admin_value error_log  /var/log/apache2/php_errors_${BRANCH}${ID}.log
+        php_admin_value upload_tmp_dir "/home/blivemaster/data/tmp"
+	php_admin_value memory_limit 256M
+        AddType application/x-httpd-php .php .php3 .php4 .php5 .phtml .inc
+        AddType application/x-httpd-php-source .phps
+</VirtualHost>
+
+<VirtualHost *:8080>
+        ServerName  webcs2.${BRANCH}${ID}.livemaster
+        DocumentRoot /home/blivemaster/data/${BRANCH}${ID}
+        ServerAdmin support@livemaster.ru
+        SecRuleEngine Off
+        DirectoryIndex index.php
+        #CustomLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.access.log combined
+        ErrorLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.error.log
+	php_admin_value open_basedir "/usr/share/php:/var/log/apache2:/home/blivemaster/data:/data:/etc/php5/include:/etc/php/7.0/include:/cs1:/cs2:/cs5:/cs6:/cs7:/cs8:/cs9:/cs10:/cs11:/storage:/pcs1:/pcs2:/pcs5"
+        php_admin_value error_log  /var/log/apache2/php_errors_${BRANCH}${ID}.log
+        php_admin_value upload_tmp_dir "/home/blivemaster/data/tmp"
+	php_admin_value memory_limit 256M
+        AddType application/x-httpd-php .php .php3 .php4 .php5 .phtml .inc
+        AddType application/x-httpd-php-source .phps
+</VirtualHost>
+
+<VirtualHost *:8080>
+        ServerName  webcs5.${BRANCH}${ID}.livemaster
+        DocumentRoot /home/blivemaster/data/${BRANCH}${ID}
+        ServerAdmin support@livemaster.ru
+        SecRuleEngine Off
+        DirectoryIndex index.php
+        #CustomLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.access.log combined
+        ErrorLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.error.log
+	php_admin_value open_basedir "/usr/share/php:/var/log/apache2:/var/xhprof:/home/blivemaster/data:/data:/etc/php5/include:/etc/php/7.0/include:/cs1:/cs2:/cs5:/cs6:/cs7:/cs8:/cs9:/cs10:/cs11:/storage:/pcs1:/pcs2:/pcs5"
+	php_admin_value error_log  /var/log/apache2/php_errors_${BRANCH}${ID}.log
+        php_admin_value upload_tmp_dir "/home/blivemaster/data/tmp"
+        php_admin_value memory_limit 256M
+        AddType application/x-httpd-php .php .php3 .php4 .php5 .phtml .inc
+        AddType application/x-httpd-php-source .phps
+</VirtualHost>
+
+<VirtualHost *:8080>
+        ServerName  webcs6.${BRANCH}${ID}.livemaster
+        DocumentRoot /home/blivemaster/data/${BRANCH}${ID}
+        ServerAdmin support@livemaster.ru
+        SecRuleEngine Off
+        DirectoryIndex index.php
+        #CustomLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.access.log combined
+        ErrorLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.error.log
+	php_admin_value open_basedir "/usr/share/php:/var/log/apache2:/var/xhprof:/home/blivemaster/data:/data:/etc/php5/include:/etc/php/7.0/include:/cs1:/cs2:/cs5:/cs6:/cs7:/cs8:/cs9:/cs10:/cs11:/storage:/pcs1:/pcs2:/pcs5"
+	php_admin_value error_log  /var/log/apache2/php_errors_${BRANCH}${ID}.log
+        php_admin_value upload_tmp_dir "/home/blivemaster/data/tmp"
+        php_admin_value memory_limit 256M
+        AddType application/x-httpd-php .php .php3 .php4 .php5 .phtml .inc
+        AddType application/x-httpd-php-source .phps
+</VirtualHost>
+
+<VirtualHost *:8080>
+        ServerName  webcs7.${BRANCH}${ID}.livemaster
+        DocumentRoot /home/blivemaster/data/${BRANCH}${ID}
+        ServerAdmin support@livemaster.ru
+        SecRuleEngine Off
+        DirectoryIndex index.php
+        #CustomLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.access.log combined
+        ErrorLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.error.log
+	php_admin_value open_basedir "/usr/share/php:/var/log/apache2:/var/xhprof:/home/blivemaster/data:/data:/etc/php5/include:/etc/php/7.0/include:/cs1:/cs2:/cs5:/cs6:/cs7:/cs8:/cs9:/cs10:/cs11:/storage:/pcs1:/pcs2:/pcs5"
+	php_admin_value error_log  /var/log/apache2/php_errors_${BRANCH}${ID}.log
+        php_admin_value upload_tmp_dir "/home/blivemaster/data/tmp"
+        php_admin_value memory_limit 256M
+        AddType application/x-httpd-php .php .php3 .php4 .php5 .phtml .inc
+        AddType application/x-httpd-php-source .phps
+</VirtualHost>
+
+<VirtualHost *:8080>
+        ServerName  webcs8.${BRANCH}${ID}.livemaster
+        DocumentRoot /home/blivemaster/data/${BRANCH}${ID}
+        ServerAdmin support@livemaster.ru
+        SecRuleEngine Off
+        DirectoryIndex index.php
+        #CustomLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.access.log combined
+        ErrorLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.error.log
+	php_admin_value open_basedir "/usr/share/php:/var/log/apache2:/var/xhprof:/home/blivemaster/data:/data:/etc/php5/include:/etc/php/7.0/include:/cs1:/cs2:/cs5:/cs6:/cs7:/cs8:/cs9:/cs10:/cs11:/storage:/pcs1:/pcs2:/pcs5"
+	php_admin_value error_log  /var/log/apache2/php_errors_${BRANCH}${ID}.log
+        php_admin_value upload_tmp_dir "/home/blivemaster/data/tmp"
+        php_admin_value memory_limit 256M
+        AddType application/x-httpd-php .php .php3 .php4 .php5 .phtml .inc
+        AddType application/x-httpd-php-source .phps
+</VirtualHost>
+
+<VirtualHost *:8080>
+        ServerName  webcs9.${BRANCH}${ID}.livemaster
+        DocumentRoot /home/blivemaster/data/${BRANCH}${ID}
+        ServerAdmin support@livemaster.ru
+        SecRuleEngine Off
+        DirectoryIndex index.php
+        #CustomLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.access.log combined
+        ErrorLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.error.log
+	php_admin_value open_basedir "/usr/share/php:/var/log/apache2:/var/xhprof:/home/blivemaster/data:/data:/etc/php5/include:/etc/php/7.0/include:/cs1:/cs2:/cs5:/cs6:/cs7:/cs8:/cs9:/cs10:/cs11:/storage:/pcs1:/pcs2:/pcs5"
+	php_admin_value error_log  /var/log/apache2/php_errors_${BRANCH}${ID}.log
+        php_admin_value upload_tmp_dir "/home/blivemaster/data/tmp"
+        php_admin_value memory_limit 256M
+        AddType application/x-httpd-php .php .php3 .php4 .php5 .phtml .inc
+        AddType application/x-httpd-php-source .phps
+</VirtualHost>
+
+<VirtualHost *:8080>
+        ServerName  webcs10.${BRANCH}${ID}.livemaster
+        DocumentRoot /home/blivemaster/data/${BRANCH}${ID}
+        ServerAdmin support@livemaster.ru
+        SecRuleEngine Off
+        DirectoryIndex index.php
+        #CustomLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.access.log combined
+        ErrorLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.error.log
+        php_admin_value open_basedir "/usr/share/php:/var/log/apache2:/var/xhprof:/home/blivemaster/data:/data:/etc/php5/include:/etc/php/7.0/include:/cs1:/cs2:/cs5:/cs6:/cs7:/cs8:/cs9:/cs10:/cs11:/storage:/pcs1:/pcs2:/pcs5"
+        php_admin_value error_log  /var/log/apache2/php_errors_${BRANCH}${ID}.log
+        php_admin_value upload_tmp_dir "/home/blivemaster/data/tmp"
+        php_admin_value memory_limit 256M
+        AddType application/x-httpd-php .php .php3 .php4 .php5 .phtml .inc
+        AddType application/x-httpd-php-source .phps
+</VirtualHost>
+
+<VirtualHost *:8080>
+        ServerName  webcs11.${BRANCH}${ID}.livemaster
+        DocumentRoot /home/blivemaster/data/${BRANCH}${ID}
+        ServerAdmin support@livemaster.ru
+        SecRuleEngine Off
+        DirectoryIndex index.php
+        #CustomLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.access.log combined
+        ErrorLog /var/log/apache2/webcs.${BRANCH}${ID}.livemaster.error.log
+        php_admin_value open_basedir "/usr/share/php:/var/log/apache2:/var/xhprof:/home/blivemaster/data:/data:/etc/php5/include:/etc/php/7.0/include:/cs1:/cs2:/cs5:/cs6:/cs7:/cs8:/cs9:/cs10:/cs11:/storage:/pcs1:/pcs2:/pcs5"
+        php_admin_value error_log  /var/log/apache2/php_errors_${BRANCH}${ID}.log
+        php_admin_value upload_tmp_dir "/home/blivemaster/data/tmp"
+        php_admin_value memory_limit 256M
+        AddType application/x-httpd-php .php .php3 .php4 .php5 .phtml .inc
+        AddType application/x-httpd-php-source .phps
+</VirtualHost>
+

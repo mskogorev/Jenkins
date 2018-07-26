@@ -1,0 +1,31 @@
+qshort_open_tag = On
+expose_php = Off
+;memory_limit = 10560M
+memory_limit = 1024M
+upload_max_filesize = 60M
+post_max_size = 60M
+session.save_handler = memcached
+session.save_path = "192.168.255.242:11000,192.168.255.244:11000"
+session.gc_probability = 1
+session.entropy_length = 32
+sendmail_path="/bin/fake_sendmail -t -i -f noreply@livemaster.ru crons"
+;sendmail_path = /usr/sbin/sendmail -t -i -f no-reply@em.livemaster.ru
+mail.add_x_header = Off
+opcache.enable = On
+disable_functions = apache_setenv,chown,chgrp,closelog,define_syslog_variables,dl,ftp_exec,openlog,passthru,pcntl_exec,shell_exec,popen,posix_getegid,posix_geteuid,posix_getpwuid,posix_kill,posix_mkfifo,posix_setpgid,posix_setsid,posix_setuid,posix_uname,proc_close,proc_get_status,proc_nice,proc_open,proc_terminate,syslog,show_source,parse_ini_file,pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority
+date.timezone = "Europe/Moscow"
+max_execution_time = 30
+max_input_time = 60
+;error_reporting = E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT
+error_reporting = E_ALL & ~E_NOTICE & ~E_STRICT
+memcached.sess_locking = 0
+memcached.sess_consistent_hash = 1
+memcached.sess_binary = 1
+memcached.sess_number_of_replicas = 2
+memcached.sess_remove_failed = 1
+memcached.sess_randomize_replica_read = 1
+
+openssl.cafile = /home/blivemaster/configs/ssl-cert/ca/LivemasterCA.crt
+openssl.capath = /home/blivemaster/configs/ssl-cert/ca
+
+include_path = "/etc/php/7.0/include:."

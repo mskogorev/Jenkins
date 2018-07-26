@@ -1,0 +1,9 @@
+server {
+	listen 80 default_server;
+	listen 1861 default_server;
+	#listen 1862 default_server;
+	
+	location / {
+		return 404;
+	}
+}

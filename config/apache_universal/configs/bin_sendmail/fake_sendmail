@@ -1,0 +1,16 @@
+#!/bin/sh
+if echo $5 | grep -Eq '^beta[0-9][0-9]$'
+then
+        prefix="/home/blivemaster/sendmail/$5"
+else
+        prefix="/home/blivemaster/sendmail/crons"
+fi
+date=`date +%F_%H-%M`
+name="$prefix/$date.txt"
+while read line
+do
+echo "$line" >> $name
+done
+chmod 777 $name 2>/dev/null
+/bin/true
+
