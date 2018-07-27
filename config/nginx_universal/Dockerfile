@@ -4,7 +4,7 @@ FROM ubuntu:16.04
 ENV DEBIAN_FRONTEND noninteractive
 #Устанавливаем минимальный набор необходимых пакетов
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends apt-utils libssl1.0.0=1.0.2g-1ubuntu4.10 locales tzdata gettext-base \
+    && apt-get install -y --no-install-recommends apt-utils libssl1.0.0=1.0.2g-1ubuntu4.13 locales tzdata gettext-base \
     && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
     && ln -snf /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 ENV LANG en_US.utf8
