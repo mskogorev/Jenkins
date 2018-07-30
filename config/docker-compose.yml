@@ -1,0 +1,141 @@
+version: '3'
+services:
+ nginx:
+  image: beta/nginx:1.0_25.05.2018
+  environment:
+   - ID=${ID}
+   - BRANCH=${BRANCH}
+  command: /bin/bash -c "for conf in $$(find /home/blivemaster/docker/template/nginx/ -name '*.*_template'); do envsubst '\$$ID,\$$BRANCH' < $$conf  > /etc/nginx/sites-enabled/$$(echo $$conf | awk -F / '{print $$7}' | awk -F "_" '{print $$1}'); done && sleep 3 && nginx -g 'daemon off;'"
+  volumes:
+###
+   - /home/blivemaster/docker/template:/home/blivemaster/docker/template
+   - /home/blivemaster/configs/ssl-cert:/etc/apache2/ssl-cert
+   - /home/blivemaster/configs/lm:/etc/nginx/lm
+###
+   - /home/blivemaster/data/${BRANCH}${ID}:/home/blivemaster/data/${BRANCH}${ID}
+   - /home/blivemaster/data/tmp:/home/blivemaster/data/tmp
+   - /home/blivemaster/sendmail/beta${SENDMAIL_ID}:/home/blivemaster/sendmail/beta${SENDMAIL_ID}
+   - /home/blivemaster/data/logs:/home/blivemaster/data/logs
+   - /var/log/nginx:/var/log/nginx
+   - /cs1:/cs1
+   - /cs2:/cs2
+   - /cs5:/cs5
+   - /cs6:/cs6
+   - /cs7:/cs7
+   - /cs8:/cs8
+   - /cs9:/cs9
+   - /cs10:/cs10
+   - /cs11:/cs11
+   - /data:/data
+   - /storage:/storage
+   - /pcs1:/pcs1
+   - /pcs2:/pcs2
+   - /pcs5:/pcs5
+   - /nginx_cache:/nginx_cache
+  ports:
+     - ${PORT_443}:443
+     - ${PORT_1862}:1862
+  depends_on:
+   - apache
+  extra_hosts:
+   - "${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs1.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs2.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs3.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs4.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs5.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs6.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs7.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs8.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs9.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs11.${BRANCH}${ID}.livemaster:192.168.255.244"
+   - "mbs.livemaster:192.168.255.242"
+   - "webcs1.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "webcs2.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "webcs5.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "webcs6.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "webcs7.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "webcs9.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "webcs11.${BRANCH}${ID}.livemaster:127.0.0.1"
+  deploy:
+   labels:
+    com.docker.stack.namespace: "${NETWORK}"
+   replicas: 2
+  networks:
+   - beta
+
+ apache:
+  image: beta/apache2_php_haproxy:2.0_25.05.2018
+  environment:
+   - ID=${ID}
+   - BRANCH=${BRANCH}
+  command: /bin/bash -c "haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -D && for conf in $$(find /home/blivemaster/docker/template/apache2/ -name '*.*_template'); do envsubst '\$$ID,\$$BRANCH' < $$conf  > /etc/apache2/sites-enabled/$$(echo $$conf | awk -F / '{print $$7}' | awk -F "_" '{print $$1}'); done && apache2ctl -D FOREGROUND"
+  volumes:
+###
+   - /home/blivemaster/docker/template:/home/blivemaster/docker/template
+   - /home/blivemaster/configs/ssl-cert:/etc/apache2/ssl-cert
+   - /home/blivemaster/configs/include:/etc/php/7.0/include
+   - /home/blivemaster/configs/php/7.0/mods-available:/etc/php/7.0/mods-available
+###
+   - /home/blivemaster/data/${BRANCH}${ID}:/home/blivemaster/data/${BRANCH}${ID}
+   - /home/blivemaster/data/tmp:/home/blivemaster/data/tmp
+   - /home/blivemaster/sendmail/beta${SENDMAIL_ID}:/home/blivemaster/sendmail/beta${SENDMAIL_ID}
+   - /home/blivemaster/sendmail/crons:/home/blivemaster/sendmail/crons
+   - /home/blivemaster/data/logs:/home/blivemaster/data/logs
+   - /var/log/apache2:/var/log/apache2
+   - /var/log/xdebug.log:/var/log/xdebug.log
+   - /etc/ssl:/etc/ssl
+   - /usr/share/ca-certificates:/usr/share/ca-certificates
+   - /usr/lib/ssl:/usr/lib/ssl
+   - /cs1:/cs1
+   - /cs2:/cs2
+   - /cs5:/cs5
+   - /cs6:/cs6
+   - /cs7:/cs7
+   - /cs8:/cs8
+   - /cs9:/cs9
+   - /cs10:/cs10
+   - /cs11:/cs11
+   - /data:/data
+   - /storage:/storage
+   - /pcs1:/pcs1
+   - /pcs2:/pcs2
+   - /pcs5:/pcs5
+  extra_hosts:
+   - "${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs1.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs2.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs3.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs4.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs5.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs6.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs7.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs8.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs9.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cs11.${BRANCH}${ID}.livemaster:192.168.255.244"
+   - "mbs.livemaster:192.168.255.242"
+   - "webcs1.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "webcs2.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "webcs5.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "webcs6.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "webcs7.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "webcs9.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "webcs11.${BRANCH}${ID}.livemaster:127.0.0.1"
+   - "cas.livemaster:127.0.0.1"
+   - "cas15.livemaster:127.0.0.1"
+   - "cas20.livemaster:127.0.0.1"
+   - "cas25.livemaster:127.0.0.1"
+   - "ncs.livemaster:127.0.0.1"
+   - "ncs15.livemaster:127.0.0.1"
+   - "ncs14.livemaster:127.0.0.1"
+   - "ncs48.livemaster:127.0.0.1"
+   - "ws1.livemaster:127.0.0.1"
+  deploy:
+   replicas: 2
+  networks:
+   - beta
+
+networks:
+ beta:
+  external:
+      name: ${NETWORK}
