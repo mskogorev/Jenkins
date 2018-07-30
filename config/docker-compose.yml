@@ -60,7 +60,7 @@ services:
   deploy:
    labels:
     com.docker.stack.namespace: "${NETWORK}"
-   replicas: 2
+   replicas: 1
   networks:
    - beta
 
@@ -131,7 +131,7 @@ services:
    - "ncs48.livemaster:127.0.0.1"
    - "ws1.livemaster:127.0.0.1"
   deploy:
-   replicas: 2
+   replicas: 1
   networks:
    - beta
 
