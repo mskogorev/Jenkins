@@ -1,7 +1,7 @@
 version: '3'
 services:
  nginx:
-  image: beta/nginx:1.0_25.05.2018
+  image: nginx_jenkins:${BUILD_NUMBER}
   environment:
    - ID=${ID}
    - BRANCH=${BRANCH}
@@ -65,7 +65,7 @@ services:
    - beta
 
  apache:
-  image: beta/apache2_php_haproxy:2.0_25.05.2018
+  image: apache_jenkins:${BUILD_NUMBER}
   environment:
    - ID=${ID}
    - BRANCH=${BRANCH}
